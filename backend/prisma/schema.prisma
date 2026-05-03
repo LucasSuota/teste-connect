@@ -1,13 +1,146 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  nickname     String   @unique
+  name         String
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  memberships  GroupMember[]
+  invitesSent  Invite[]
+  tests        Test[]
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     GroupMember[]
+  invites     Invite[]
+  tests       Test[]
+}
+
+enum GroupRole {
+  MANAGER
+  FIELD_ENGINEER
+  REVIEWER
+  VIEWER
+}
+
+model GroupMember {
+  id       String    @id @default(uuid())
+  role     GroupRole @default(VIEWER)
+  joinedAt DateTime  @default(now())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  groupId  String
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model Invite {
+  id          String       @id @default(uuid())
+  email       String
+  role        GroupRole    @default(VIEWER)
+  status      InviteStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+
+  groupId     String
+  group       Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  invitedById String
+  invitedBy   User   @relation(fields: [invitedById], references: [id])
+}
+
+enum TestType {
+  PROCTOR
+  SAND_CONE
+}
+
+enum TestStatus {
+  DRAFT
+  COMPLETED
+  APPROVED
+}
+
+model Test {
+  id          String     @id @default(uuid())
+  type        TestType
+  status      TestStatus @default(DRAFT)
+  location    String?
+  notes       String?
+  performedAt DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  groupId     String
+  group       Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  proctorData  ProctorData?
+  sandConeData SandConeData?
+}
+
+model ProctorData {
+  id               String @id @default(uuid())
+
+  cylinderMass     Float
+  soilCylinderMass Float
+  cylinderVolume   Float
+  wetSoil Float
+  drySoil Float
+  tare Float
+  
+  moisturePercentage  Float
+  dryDensity       Float
+  optimalMoisture  Float?
+
+  testId           String @unique
+  test             Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+}
+
+model SandConeData {
+  id             String @id @default(uuid())
+
+  jarInitialMass Float
+  jarFinalMass   Float
+  sandDensity    Float
+  sandConeMass   Float
+  extractedSoil  Float
+  wetSoil Float
+  drySoil Float
+  tare Float
+
+  // calculados
+  moisturePercentage Float
+  holeDensity    Float
+  dryDensity     Float
+
+  testId         String @unique
+  test           Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
