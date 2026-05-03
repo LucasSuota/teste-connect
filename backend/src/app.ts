@@ -10,7 +10,7 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 
-app.get('/health', (req: Request, res: Response) => {
+app.get('/demo', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
