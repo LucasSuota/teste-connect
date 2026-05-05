@@ -3,8 +3,14 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+
 import authRoutes from './routes/auth.routes.js'
+import groupRoutes from './routes/group.routes.js'
+import testRoutes from './routes/test.routes.js'
+
 import { AuthError } from './services/auth.service.js'
+import { GroupError } from './services/group.service.js'
+import { TestError } from './services/test.service.js'
 
 const app: Application = express()
 
@@ -19,15 +25,9 @@ app.get('/demo', (req: Request, res: Response) => {
 })
 
 app.use('/api/auth', authRoutes)
-
-import groupRoutes from './routes/group.routes.js'
-import { GroupError } from './services/group.service.js'
-
-// Rotas
-app.use('/api/auth',   authRoutes)
 app.use('/api/groups', groupRoutes)
+app.use('/api/groups/:groupId/tests', testRoutes)
 
-// Error handler global — adiciona o GroupError
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof AuthError) {
     res.status(err.statusCode).json({ error: err.message })
@@ -37,12 +37,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res.status(err.statusCode).json({ error: err.message })
     return
   }
-  console.error(err)
-  res.status(500).json({ error: 'Erro interno do servidor' })
-})
-
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof AuthError) {
+  if (err instanceof TestError) {
     res.status(err.statusCode).json({ error: err.message })
     return
   }

@@ -33,7 +33,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
 export async function refresh(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.cookies?.refreshToken
+    const token = req.cookies?.refreshToken || req.body?.refreshToken
     if (!token) {
       res.status(401).json({ error: 'Refresh token não encontrado' })
       return

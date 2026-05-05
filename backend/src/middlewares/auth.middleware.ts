@@ -6,6 +6,13 @@ declare global {
   namespace Express {
     interface Request {
       user?: JwtPayload
+      params: {
+        id?: string
+        inviteId?: string
+        userId?: string
+        groupId?: string
+        testId?: string
+      }
     }
   }
 }

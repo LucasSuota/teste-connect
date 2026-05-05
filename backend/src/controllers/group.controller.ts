@@ -25,21 +25,21 @@ export async function handleGetMyGroups(req: Request, res: Response, next: NextF
 
 export async function handleGetGroup(req: Request, res: Response, next: NextFunction) {
   try {
-    const group = await getGroupById(req.params.id, req.user!.sub)
+    const group = await getGroupById(req.params.id as string, req.user!.sub)
     res.json({ group })
   } catch (err) { next(err) }
 }
 
 export async function handleInviteMember(req: Request, res: Response, next: NextFunction) {
   try {
-    const invite = await inviteMember(req.params.id, req.user!.sub, req.body)
+    const invite = await inviteMember(req.params.id as string, req.user!.sub, req.body)
     res.status(201).json({ invite })
   } catch (err) { next(err) }
 }
 
 export async function handleAcceptInvite(req: Request, res: Response, next: NextFunction) {
   try {
-    const member = await acceptInvite(req.params.inviteId, req.user!.sub)
+    const member = await acceptInvite(req.params.inviteId as string, req.user!.sub)
     res.json({ member })
   } catch (err) { next(err) }
 }
@@ -47,9 +47,9 @@ export async function handleAcceptInvite(req: Request, res: Response, next: Next
 export async function handleUpdateMemberRole(req: Request, res: Response, next: NextFunction) {
   try {
     const updated = await updateMemberRole(
-      req.params.id,
+      req.params.id as string,
       req.user!.sub,
-      req.params.userId,
+      req.params.userId as string,
       req.body.role as GroupRole
     )
     res.json({ member: updated })
