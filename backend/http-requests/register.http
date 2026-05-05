@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:3000/api
+@token = COLE_SEU_ACCESS_TOKEN_AQUI
+
+### Criar grupo
+POST {{baseUrl}}/groups
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Obra Rodovia BR-116",
+  "description": "Ensaios do trecho km 340 a km 380"
+}
+
+### Listar meus grupos
+GET {{baseUrl}}/groups
+Authorization: Bearer {{token}}
+
+### Buscar grupo por ID
+GET {{baseUrl}}/groups/COLE_ID_DO_GRUPO_AQUI
+Authorization: Bearer {{token}}
+
+### Convidar membro por nickname
+POST {{baseUrl}}/groups/COLE_ID_DO_GRUPO_AQUI/invite
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nickname": "amigo",
+  "role": "FIELD_ENGINEER"
+}
+
+### Aceitar convite (logar com o usuário convidado e usar token dele)
+POST {{baseUrl}}/groups/invites/COLE_ID_DO_INVITE_AQUI/accept
+Authorization: Bearer {{token_do_amigo}}

@@ -20,6 +20,27 @@ app.get('/demo', (req: Request, res: Response) => {
 
 app.use('/api/auth', authRoutes)
 
+import groupRoutes from './routes/group.routes.js'
+import { GroupError } from './services/group.service.js'
+
+// Rotas
+app.use('/api/auth',   authRoutes)
+app.use('/api/groups', groupRoutes)
+
+// Error handler global — adiciona o GroupError
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof AuthError) {
+    res.status(err.statusCode).json({ error: err.message })
+    return
+  }
+  if (err instanceof GroupError) {
+    res.status(err.statusCode).json({ error: err.message })
+    return
+  }
+  console.error(err)
+  res.status(500).json({ error: 'Erro interno do servidor' })
+})
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof AuthError) {
     res.status(err.statusCode).json({ error: err.message })
