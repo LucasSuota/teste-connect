@@ -21,9 +21,12 @@ By now only Proctor and Sand Cone test are available in the backend. In the mobi
 
 ## Application life-cycle development
 
-Backend | 🔁 In development
-Mobile | Idle
-Web | Idle
+| Test | Status |
+|---|---|
+| Backend |  🔁 In development |
+| Mobile |  🔁 In development |
+| Web |  🔁 In development |
+
 
 ## Implemented tests (NBR standards)
 
