@@ -258,6 +258,3 @@ The backend API is almost complete. The following layers are actively being buil
 
 ---
 
-## License
-
-MIT
